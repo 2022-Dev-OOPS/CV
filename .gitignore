@@ -258,7 +258,8 @@ $RECYCLE.BIN/
 config.yaml
 .theia
 .skip.esp32C3
-train
+images
+labels
 valid
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,python,macos,windows
