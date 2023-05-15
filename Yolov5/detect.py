@@ -41,6 +41,8 @@ ROOT = FILE.parents[0]  # YOLOv5 root directory
 if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))  # add ROOT to PATH
 ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
+SetTime = 30
+COUNTDOWN = SetTime
 
 from models.common import DetectMultiBackend
 from utils.dataloaders import IMG_FORMATS, VID_FORMATS, LoadImages, LoadScreenshots, LoadStreams
@@ -204,7 +206,18 @@ def run(
                     vid_writer[i].write(im0)
 
         # Print time (inference-only)
+        global COUNTDOWN
         LOGGER.info(f"{s}{'' if len(det) else '(no detections), '}{dt[1].dt * 1E3:.1f}ms")
+
+        if len(det):
+            COUNTDOWN = SetTime
+            LOGGER.info(f"COUNTDOWN = {COUNTDOWN}")
+        else:
+            COUNTDOWN -= 1
+            LOGGER.info(f"COUNTDOWN = {COUNTDOWN}")
+
+        if COUNTDOWN <= 0:
+            exit()
 
     # Print results
     t = tuple(x.t / seen * 1E3 for x in dt)  # speeds per image
