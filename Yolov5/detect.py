@@ -32,7 +32,10 @@ import argparse
 import os
 import platform
 import sys
+import time
 from pathlib import Path
+import threading
+from apscheduler.schedulers.background import BackgroundScheduler
 
 import torch
 
@@ -50,6 +53,7 @@ from utils.general import (LOGGER, Profile, check_file, check_img_size, check_im
                            increment_path, non_max_suppression, print_args, scale_boxes, strip_optimizer, xyxy2xywh)
 from utils.plots import Annotator, colors, save_one_box
 from utils.torch_utils import select_device, smart_inference_mode
+
 
 
 @smart_inference_mode()
@@ -82,6 +86,10 @@ def run(
         dnn=False,  # use OpenCV DNN for ONNX inference
         vid_stride=1,  # video frame-rate stride
 ):
+
+    start_time=time.time()
+    count=0
+
     source = str(source)
     save_img = not nosave and not source.endswith('.txt')  # save inference images
     is_file = Path(source).suffix[1:] in (IMG_FORMATS + VID_FORMATS)
@@ -206,18 +214,13 @@ def run(
                     vid_writer[i].write(im0)
 
         # Print time (inference-only)
-        global COUNTDOWN
         LOGGER.info(f"{s}{'' if len(det) else '(no detections), '}{dt[1].dt * 1E3:.1f}ms")
 
         if len(det):
-            COUNTDOWN = SetTime
-            LOGGER.info(f"COUNTDOWN = {COUNTDOWN}")
-        else:
-            COUNTDOWN -= 1
-            LOGGER.info(f"COUNTDOWN = {COUNTDOWN}")
-
-        if COUNTDOWN <= 0:
-            exit()
+            start_time = time.time()
+            count =+ 1
+        if start_time-time.time() <= -3 and count >= 1:
+            return 0
 
     # Print results
     t = tuple(x.t / seen * 1E3 for x in dt)  # speeds per image
@@ -267,6 +270,7 @@ def parse_opt():
 def main(opt):
     check_requirements(exclude=('tensorboard', 'thop'))
     run(**vars(opt))
+
 
 
 if __name__ == "__main__":
