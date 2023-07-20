@@ -34,8 +34,6 @@ import platform
 import sys
 import time
 from pathlib import Path
-import threading
-from apscheduler.schedulers.background import BackgroundScheduler
 
 import torch
 
@@ -44,8 +42,8 @@ ROOT = FILE.parents[0]  # YOLOv5 root directory
 if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))  # add ROOT to PATH
 ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
-SetTime = 30
-COUNTDOWN = SetTime
+first_roop = True
+
 
 from models.common import DetectMultiBackend
 from utils.dataloaders import IMG_FORMATS, VID_FORMATS, LoadImages, LoadScreenshots, LoadStreams
@@ -86,9 +84,6 @@ def run(
         dnn=False,  # use OpenCV DNN for ONNX inference
         vid_stride=1,  # video frame-rate stride
 ):
-
-    start_time=time.time()
-    count=0
 
     source = str(source)
     save_img = not nosave and not source.endswith('.txt')  # save inference images
@@ -216,10 +211,19 @@ def run(
         # Print time (inference-only)
         LOGGER.info(f"{s}{'' if len(det) else '(no detections), '}{dt[1].dt * 1E3:.1f}ms")
 
+        global first_roop
+
+        if first_roop:
+            start_time = time.time()
+            set_time = time.time()
+            first_roop = False
+
         if len(det):
             start_time = time.time()
-            count =+ 1
-        if start_time-time.time() <= -3 and count >= 1:
+        else:
+            set_time = time.time()
+
+        if set_time - start_time >= 3:
             return 0
 
     # Print results
