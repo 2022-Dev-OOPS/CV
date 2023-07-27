@@ -1,7 +1,7 @@
 ![254303205-2c708d0a-7f16-4501-8fc8-0b3f5333c2f4](https://github.com/HyeokHam/2022-Dev-OOPS_CV/assets/90409694/61b93f83-3e22-45ba-a557-6f800a48cfbb)
 # Computer Vision
 
-해당 서버는 CAM Server에서 받은 영상데이터를 Yolov5 모델로 인체를 인식하여 탐지하여 차수벽 가동을 결정하는 역할을 합니다.
+CAM Server에서 받은 영상데이터를 Yolov5 모델로 인체를 인식하여 탐지하여 차수벽 가동을 결정하는 역할을 합니다.
 
 ## 기술 스택 및 환경
 
